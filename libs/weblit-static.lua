@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.2.1"
+exports.version = "0.2.2"
 exports.dependencies = {
   "creationix/mime@0.1.0",
   "creationix/coro-fs@1.2.3",
@@ -7,7 +7,7 @@ exports.dependencies = {
 
 local getType = require("mime").getType
 local jsonStringify = require('json').stringify
-local makeChroot = require('fs').chroot
+local makeChroot = require('coro-fs').chroot
 
 return function (path)
 
