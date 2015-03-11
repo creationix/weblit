@@ -1,18 +1,17 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.1.0"
+exports.version = "0.2.0"
 exports.dependencies = {
-  "creationix/mime@0.1.0"
+  "creationix/mime@0.1.0",
+  "creationix/coro-fs@1.3.4",
 }
 
 local getType = require("mime").getType
 local jsonStringify = require('json').stringify
+local makeChroot = require('fs').chroot
 
--- The fs instance here is expected to have readFile(path), stat(path) and
--- scandir(path) that acts like coro-fs chroot
-return function (fs)
-  assert(type(fs.readFile) == "function", "Missing fs.readFile function")
-  assert(type(fs.stat) == "function", "Missing fs.stat function")
-  assert(type(fs.scandir) == "function", "Missing fs.scandir function")
+return function (path)
+
+  local fs = makeChroot(path)
 
   return function (req, res, go)
     if req.method ~= "GET" then return go() end
