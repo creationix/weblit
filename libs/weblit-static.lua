@@ -1,8 +1,8 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.2.0"
+exports.version = "0.2.1"
 exports.dependencies = {
   "creationix/mime@0.1.0",
-  "creationix/coro-fs@1.3.4",
+  "creationix/coro-fs@1.2.3",
 }
 
 local getType = require("mime").getType
