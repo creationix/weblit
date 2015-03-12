@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.2.2"
+exports.version = "0.2.3"
 exports.dependencies = {
   "creationix/mime@0.1.0",
   "creationix/coro-fs@1.2.3",
@@ -16,6 +16,7 @@ return function (path)
   return function (req, res, go)
     if req.method ~= "GET" then return go() end
     local path = (req.params and req.params.path) or req.path
+    path = path:match("^[^?#]*")
     if path:byte(1) == 47 then
       path = path:sub(2)
     end
