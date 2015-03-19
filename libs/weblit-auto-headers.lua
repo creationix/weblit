@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-auto-headers"
-exports.version = "0.1.0"
+exports.version = "0.1.1"
 
 --[[
 
@@ -61,7 +61,7 @@ return function (req, res, go)
       headers[#headers + 1] = {"Connection", "Close"}
     end
   end
-  res.keepAlive = lowerHeaders.connection:lower() == "keep-alive"
+  res.keepAlive = lowerHeaders.connection and lowerHeaders.connection:lower() == "keep-alive"
 
   local body = res.body
   if body then
