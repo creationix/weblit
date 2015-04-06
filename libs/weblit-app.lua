@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.1.1"
+exports.version = "0.1.2"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
@@ -152,8 +152,9 @@ local function compileRoute(route)
 end
 
 
-local function handleRequest(head, input)
+local function handleRequest(head, input, socket)
   local req = {
+    socket = socket,
     method = head.method,
     path = head.path,
     headers = setmetatable({}, headerMeta),
@@ -200,13 +201,13 @@ local function handleRequest(head, input)
   return out, res.body
 end
 
-local function handleConnection(rawRead, rawWrite)
+local function handleConnection(rawRead, rawWrite, socket)
 
   -- Speak in HTTP events
   local read = readWrap(rawRead, httpCodec.decoder())
   local write = writeWrap(rawWrite, httpCodec.encoder())
 
-  for req in read do
+  for head in read do
     local parts = {}
     for chunk in read do
       if #chunk > 0 then
@@ -215,11 +216,10 @@ local function handleConnection(rawRead, rawWrite)
         break
       end
     end
-    req.parts = #parts > 0 and table.concat(parts) or nil
-    local res, body = handleRequest(req)
+    local res, body = handleRequest(head, #parts > 0 and table.concat(parts) or nil, socket)
     write(res)
     write(body)
-    if not (res.keepAlive and req.keepAlive) then
+    if not (res.keepAlive and head.keepAlive) then
       break
     end
   end
