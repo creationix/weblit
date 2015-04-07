@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.1.2"
+exports.version = "0.1.3"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
@@ -152,6 +152,7 @@ local function compileRoute(route)
 end
 
 
+
 local function handleRequest(head, input, socket)
   local req = {
     socket = socket,
@@ -246,7 +247,7 @@ function server.route(options, handler)
     if host and not (req.headers.host and host(req.headers.host)) then return go() end
     local params
     if path then
-      params = path(req.path)
+      params = path(req.path:match("^[^?#]*"))
       if not params then return go() end
     end
     req.params = params or {}
