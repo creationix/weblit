@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-websocket"
-exports.version = "0.1.1"
+exports.version = "0.2.0"
 exports.dependencies = {
   "creationix/websocket-codec@1.0.2"
 }
@@ -58,10 +58,10 @@ local function websocketHandler(options, handler)
     if protocol then
       headers["Sec-WebSocket-Protocol"] = protocol
     end
-    function res.upgrade(read, write, updateDecoder, updateEncoder, socket)
+    function res.upgrade(read, write, updateDecoder, updateEncoder)
       updateDecoder(websocketCodec.decode)
       updateEncoder(websocketCodec.encode)
-      return handler(read, write, socket)
+      return handler(req, read, write)
     end
   end
 end
