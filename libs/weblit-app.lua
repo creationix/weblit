@@ -1,8 +1,9 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.2.0"
+exports.version = "0.2.1"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
+  'creationix/coro-tls@1.1.3',
   'luvit/http-codec@1.0.0',
 }
 --[[
