@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.2.1"
+exports.version = "0.2.2"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
@@ -205,6 +205,85 @@ function server.start()
     end)
     print("HTTP server listening at http" .. (options.tls and "s" or "") .. "://" .. options.host .. (options.port == (options.tls and 443 or 80) and "" or ":" .. options.port) .. "/")
   end
+  return server
+end
+
+local quotepattern = '(['..("%^$().[]*+-?"):gsub("(.)", "%%%1")..'])'
+local function escape(str)
+    return str:gsub(quotepattern, "%%%1")
+end
+
+local function compileGlob(glob)
+  local parts = {"^"}
+  for a, b in glob:gmatch("([^*]*)(%**)") do
+    if #a > 0 then
+      parts[#parts + 1] = escape(a)
+    end
+    if #b > 0 then
+      parts[#parts + 1] = "(.*)"
+    end
+  end
+  parts[#parts + 1] = "$"
+  local pattern = table.concat(parts)
+  return function (string)
+    return string and string:match(pattern)
+  end
+end
+
+local function compileRoute(route)
+  local parts = {"^"}
+  local names = {}
+  for a, b, c, d in route:gmatch("([^:]*):([_%a][_%w]*)(:?)([^:]*)") do
+    if #a > 0 then
+      parts[#parts + 1] = escape(a)
+    end
+    if #c > 0 then
+      parts[#parts + 1] = "(.*)"
+    else
+      parts[#parts + 1] = "([^/]*)"
+    end
+    names[#names + 1] = b
+    if #d > 0 then
+      parts[#parts + 1] = escape(d)
+    end
+  end
+  if #parts == 1 then
+    return function (string)
+      if string == route then return {} end
+    end
+  end
+  parts[#parts + 1] = "$"
+  local pattern = table.concat(parts)
+  return function (string)
+    local matches = {string:match(pattern)}
+    if #matches > 0 then
+      local results = {}
+      for i = 1, #matches do
+        results[i] = matches[i]
+        results[names[i]] = matches[i]
+      end
+      return results
+    end
+  end
+end
+
+function server.route(options, handler)
+  local method = options.method
+  local path = options.path and compileRoute(options.path)
+  local host = options.host and compileGlob(options.host)
+  local filter = options.filter
+  server.use(function (req, res, go)
+    if method and req.method ~= method then return go() end
+    if host and not host(req.headers.host) then return go() end
+    if filter and not filter(req) then return go() end
+    local params
+    if path then
+      params = path(req.path:match("^[^?#]*"))
+      if not params then return go() end
+    end
+    req.params = params or {}
+    return handler(req, res, go)
+  end)
   return server
 end
 

@@ -1,15 +1,13 @@
 exports.name = "creationix/weblit-websocket"
-exports.version = "0.1.0"
+exports.version = "0.1.1"
 exports.dependencies = {
-  "creationix/websocket-codec@1.0.1"
+  "creationix/websocket-codec@1.0.2"
 }
 
 local websocketCodec = require('websocket-codec')
 
-local server = require('weblit-app')
-
-function server.websocket(options, handler)
-  server.use(function (req, res, go)
+local function websocketHandler(options, handler)
+  return function (req, res, go)
     -- Websocket connections must be GET requests
     -- with 'Upgrade: websocket'
     -- and 'Connection: Upgrade' headers
@@ -21,6 +19,10 @@ function server.websocket(options, handler)
       upgrade and upgrade:lower() == "websocket" and
       connection and connection:lower() == "upgrade"
     ) then
+      return go()
+    end
+
+    if options.filter and not options.filter(req) then
       return go()
     end
 
@@ -61,8 +63,13 @@ function server.websocket(options, handler)
       updateEncoder(websocketCodec.encode)
       return handler(read, write, socket)
     end
-  end)
+  end
+end
+
+local server = require('weblit-app')
+function server.websocket(options, handler)
+  server.use(websocketHandler(options, handler))
   return server
 end
 
-return server
+return websocketHandler
