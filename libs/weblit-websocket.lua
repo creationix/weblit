@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-websocket"
-exports.version = "0.2.0"
+exports.version = "0.2.1"
 exports.dependencies = {
   "creationix/websocket-codec@1.0.2"
 }
@@ -61,7 +61,15 @@ local function websocketHandler(options, handler)
     function res.upgrade(read, write, updateDecoder, updateEncoder)
       updateDecoder(websocketCodec.decode)
       updateEncoder(websocketCodec.encode)
-      return handler(req, read, write)
+      local success, err = pcall(handler, req, read, write)
+      if not success then
+        print(err)
+        write({
+          opcode = 1,
+          payload = err,
+        })
+        return write()
+      end
     end
   end
 end
