@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.2.2"
+exports.version = "0.2.3"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
@@ -176,6 +176,14 @@ local function handleConnection(rawRead, rawWrite, socket)
 end
 
 function server.bind(options)
+  if not options.host then
+    options.host = "127.0.0.1"
+  end
+  if not options.port then
+    options.port = require('uv').getuid() == 0 and
+      (options.tls and 443 or 80) or
+      (options.tls and 8443 or 8080)
+  end
   bindings[#bindings + 1] = options
   return server
 end
@@ -187,18 +195,18 @@ end
 
 
 function server.start()
+  if #bindings == 0 then
+    server.bind({})
+  end
   for i = 1, #bindings do
     local options = bindings[i]
-    if not options.port then
-      options.port = options.tls and 443 or 80
-    end
     createServer(options.host, options.port, function (rawRead, rawWrite, socket)
       local tls = options.tls
       if tls then
         rawRead, rawWrite = tlsWrap(rawRead, rawWrite, {
           server = true,
-          key = tls.key,
-          cert = tls.cert
+          key = assert(tls.key, "tls key required"),
+          cert = assert(tls.cert, "tls cert required"),
         })
       end
       return handleConnection(rawRead, rawWrite, socket)
