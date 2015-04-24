@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-websocket"
-exports.version = "0.2.1"
+exports.version = "0.2.2"
 exports.dependencies = {
   "creationix/websocket-codec@1.0.2"
 }
@@ -76,7 +76,11 @@ end
 
 local server = require('weblit-app')
 function server.websocket(options, handler)
-  server.use(websocketHandler(options, handler))
+  server.route({
+    method = "GET",
+    path = options.path,
+    host = options.host,
+  }, websocketHandler(options, handler))
   return server
 end
 
