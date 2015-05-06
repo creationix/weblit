@@ -1,10 +1,11 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.2.3"
+exports.version = "0.2.4"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
   'creationix/coro-tls@1.1.3',
   'luvit/http-codec@1.0.0',
+  'luvit/querystring@1.0.0',
 }
 --[[
 Web App Framework
@@ -59,6 +60,7 @@ local wrapper = require('coro-wrapper')
 local readWrap, writeWrap = wrapper.reader, wrapper.writer
 local httpCodec = require('http-codec')
 local tlsWrap = require('coro-tls').wrap
+local parseQuery = require('querystring').parse
 
 local server = {}
 local handlers = {}
@@ -286,8 +288,12 @@ function server.route(options, handler)
     if filter and not filter(req) then return go() end
     local params
     if path then
-      params = path(req.path:match("^[^?#]*"))
+      local pathname, query = req.path:match("^([^?]*)%??(.*)")
+      params = path(pathname)
       if not params then return go() end
+      if #query > 0 then
+        req.query = parseQuery(query)
+      end
     end
     req.params = params or {}
     return handler(req, res, go)
