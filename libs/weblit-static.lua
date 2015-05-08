@@ -1,13 +1,19 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.2.3"
+exports.version = "0.3.1"
 exports.dependencies = {
   "creationix/mime@0.1.0",
-  "creationix/coro-fs@1.2.3",
+  "creationix/hybrid-fs@0.1.0",
 }
+exports.description = "The auto-headers middleware helps Weblit apps implement proper HTTP semantics"
+exports.tags = {"weblit", "middleware", "http"}
+exports.license = "MIT"
+exports.author = { name = "Tim Caswell" }
+exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-auto-headers.lua"
 
 local getType = require("mime").getType
 local jsonStringify = require('json').stringify
-local makeChroot = require('coro-fs').chroot
+
+local makeChroot = require('hybrid-fs')
 
 return function (path)
 

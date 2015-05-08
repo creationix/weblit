@@ -1,5 +1,10 @@
 exports.name = "creationix/mime"
-exports.version = "0.1.0"
+exports.version = "0.1.2-1"
+exports.description = "A simple mime type database useful for serving static files over http."
+exports.tags = {"mime", "static"}
+exports.license = "MIT"
+exports.author = { name = "Tim Caswell" }
+exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/mime.lua"
 
 local mime = exports
 local table = {
