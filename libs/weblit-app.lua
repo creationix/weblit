@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.2.5-1"
+exports.version = "0.2.6"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
   'creationix/coro-tcp@1.0.5',
@@ -13,53 +13,6 @@ exports.license = "MIT"
 exports.author = { name = "Tim Caswell" }
 exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-app.lua"
 
---[[
-Web App Framework
-
-Middleware Contract:
-
-function middleware(req, res, go)
-  req.method
-  req.path
-  req.params
-  req.headers
-  req.version
-  req.keepAlive
-  req.body
-
-  res.code
-  res.headers
-  res.body
-
-  go() - Run next in chain, can tail call or wait for return and do more
-
-headers is a table/list with numerical headers.  But you can also read and
-write headers using string keys, it will do case-insensitive compare for you.
-
-body can be a string or a stream.  A stream is nothing more than a function
-you can call repeatedly to get new values.  Returns nil when done.
-
-server
-  .bind({
-    host = "0.0.0.0",
-    port = 8080
-  })
-  .bind({
-    host = "0.0.0.0",
-    port = 8443,
-    tls = {
-      cert = certString,
-      key = keyString,
-    }
-  })
-  .route({
-    method = "GET",
-    host = "^creationix.com",
-    path = "/:path:"
-  }, middleware)
-  .use(middleware)
-  .start()
-]]
 
 local createServer = require('coro-tcp').createServer
 local wrapper = require('coro-wrapper')
@@ -67,6 +20,9 @@ local readWrap, writeWrap = wrapper.reader, wrapper.writer
 local httpCodec = require('http-codec')
 local tlsWrap = require('coro-tls').wrap
 local parseQuery = require('querystring').parse
+
+-- Ignore SIGPIPE
+require('uv').new_signal():start("sigpipe")
 
 local server = {}
 local handlers = {}
