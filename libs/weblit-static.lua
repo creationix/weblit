@@ -15,7 +15,9 @@ local jsonStringify = require('json').stringify
 
 local makeChroot = require('hybrid-fs')
 
-return function (path)
+return function (path, options)
+
+  options = options or {}
 
   local fs = makeChroot(path)
 
@@ -26,8 +28,21 @@ return function (path)
     if path:byte(1) == 47 then
       path = path:sub(2)
     end
+
     local stat = fs.stat(path)
     if not stat then return go() end
+
+    local index_appended = false
+    if options.index and stat.type == "directory" then
+      local path_with_index = path .. options.index
+      local stat_with_index = fs.stat(path_with_index)
+      if not stat_with_index then return go() end
+      if stat_with_index.type ~= 'file' then return go() end
+      path = path_with_index
+      stat = stat_with_index
+      index_appended = true
+    end
+
     if stat.type == "directory" then
       if req.path:byte(-1) ~= 47 then
         res.code = 301
@@ -46,7 +61,7 @@ return function (path)
       return
     end
     if stat.type == "file" then
-      if req.path:byte(-1) == 47 then
+      if req.path:byte(-1) == 47 and not index_appended then
         res.code = 301
         res.headers.Location = req.path:match("^(.*[^/])/+$")
         return
