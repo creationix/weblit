@@ -150,6 +150,10 @@ It also includes the response status code.
 Make sure to use it at the top of your middleware chain so that it's able to see
 the final response code sent to the client.
 
+```lua
+.use(require('weblit-logger'))
+```
+
 ## weblit-auto-headers
 
 This implements lots of conventions and useful defaults that help your app
@@ -158,6 +162,11 @@ implement a proper HTTP server.
 You should always use this near the top of the list.  The only middleware that
 goes before this is the logger.
 
+
+```lua
+.use(require('weblit-auto-headers'))
+```
+
 ## weblit-etag-cache
 
 This caches responses in memory keyed by etag.  If there is no etag, but there
@@ -165,15 +174,23 @@ is a response body, it will use the body to generate an etag.
 
 Put this in your list after auto-headers, but before custom server logic.
 
+```lua
+.use(require('weblit-etag-cache'))
+```
+
 ## weblit-static
 
 This middleware serves static files to the user.  Use this to serve your client-
 side web assets.
 
+TODO: document usage
+
 ## weblit-websocket
 
 This implements a websocket upgrade handler.  You can choose the subprotocol and
 other routing information.
+
+TODO: document usage
 
 ## weblit
 
