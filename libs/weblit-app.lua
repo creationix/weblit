@@ -21,8 +21,11 @@ local httpCodec = require('http-codec')
 local tlsWrap = require('coro-tls').wrap
 local parseQuery = require('querystring').parse
 
--- Ignore SIGPIPE
-require('uv').new_signal():start("sigpipe")
+-- Ignore SIGPIPE if it exists on platform
+local uv = require('uv')
+if uv.constants.SIGPIPE then
+  uv.new_signal():start("sigpipe")
+end
 
 local server = {}
 local handlers = {}
