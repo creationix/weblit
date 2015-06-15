@@ -183,14 +183,45 @@ Put this in your list after auto-headers, but before custom server logic.
 This middleware serves static files to the user.  Use this to serve your client-
 side web assets.
 
-TODO: document usage
+Usage is pretty simplistic for now.
+
+```lua
+local static = require('weblit-static')
+app.use(static("path/to/static/assets"))
+```
+
+If you want to only match a sub-path, use the router.
+
+```lua
+app.route({
+  path = "/blog/:path:"
+}, static(pathJoin(module.dir, "articles")))
+```
+
+The `path` param will be used if it exists and the full path will be used
+otherwise.
 
 ## weblit-websocket
 
 This implements a websocket upgrade handler.  You can choose the subprotocol and
 other routing information.
 
-TODO: document usage
+```lua
+app.websocket({
+  path = "/v2/socket", -- Prefix for matching
+  protocol = "virgo/2.0", -- Restrict to a websocket sub-protocol
+}, function (req, read, write)
+  -- Log the request headers
+  p(req)
+  -- Log and echo all messages
+  for message in read do
+    write(message)
+  end
+  -- End the stream
+  write()
+end)
+```
+
 
 ## weblit
 
