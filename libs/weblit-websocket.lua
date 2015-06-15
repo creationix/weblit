@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-websocket"
-exports.version = "0.2.3-2"
+exports.version = "0.2.4"
 exports.dependencies = {
   "creationix/websocket-codec@1.0.3"
 }
@@ -22,7 +22,7 @@ local function websocketHandler(options, handler)
     if not (
       req.method == "GET" and
       upgrade and upgrade:lower() == "websocket" and
-      connection and connection:lower() == "upgrade"
+      (connection and connection:lower() == "upgrade" or true)
     ) then
       return go()
     end
