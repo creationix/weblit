@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.3.1-1"
+exports.version = "0.3.2"
 exports.dependencies = {
   "creationix/mime@0.1.2",
   "creationix/hybrid-fs@0.1.1",
