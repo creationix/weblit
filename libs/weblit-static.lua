@@ -28,7 +28,16 @@ return function (path)
     end
     local stat = fs.stat(path)
     if not stat then return go() end
-    if stat.type == "directory" then
+
+    local function renderFile()
+      local body = assert(fs.readFile(path))
+      res.code = 200
+      res.headers["Content-Type"] = getType(path)
+      res.body = body
+      return
+    end
+
+    local function renderDirectory()
       if req.path:byte(-1) ~= 47 then
         res.code = 301
         res.headers.Location = req.path .. '/'
@@ -36,6 +45,10 @@ return function (path)
       end
       local files = {}
       for entry in fs.scandir(path) do
+        if entry.name == "index.html" and entry.type == "file" then
+          path = path .. "/index.html"
+          return renderFile()
+        end
         files[#files + 1] = entry
         entry.url = "http://" .. req.headers.host .. req.path .. entry.name
       end
@@ -45,17 +58,16 @@ return function (path)
       res.body = body
       return
     end
-    if stat.type == "file" then
+
+    if stat.type == "directory" then
+      return renderDirectory()
+    elseif stat.type == "file" then
       if req.path:byte(-1) == 47 then
         res.code = 301
         res.headers.Location = req.path:match("^(.*[^/])/+$")
         return
       end
-      local body = assert(fs.readFile(path))
-      res.code = 200
-      res.headers["Content-Type"] = getType(path)
-      res.body = body
-      return
+      return renderFile()
     end
   end
 end
