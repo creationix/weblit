@@ -1,11 +1,11 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.3.3"
+exports.version = "0.3.3-1"
 exports.dependencies = {
   "creationix/mime@0.1.2",
   "creationix/hybrid-fs@0.1.1",
 }
-exports.description = "The auto-headers middleware helps Weblit apps implement proper HTTP semantics"
-exports.tags = {"weblit", "middleware", "http"}
+exports.description = "A weblit middleware for serving static files from disk or bundle."
+exports.tags = {"weblit", "middleware", "static"}
 exports.license = "MIT"
 exports.author = { name = "Tim Caswell" }
 exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-auto-headers.lua"
