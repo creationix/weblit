@@ -1,5 +1,5 @@
 exports.name = "creationix/weblit-static"
-exports.version = "0.3.2"
+exports.version = "0.3.3"
 exports.dependencies = {
   "creationix/mime@0.1.2",
   "creationix/hybrid-fs@0.1.1",
@@ -15,9 +15,9 @@ local jsonStringify = require('json').stringify
 
 local makeChroot = require('hybrid-fs')
 
-return function (path)
+return function (rootPath)
 
-  local fs = makeChroot(path)
+  local fs = makeChroot(rootPath)
 
   return function (req, res, go)
     if req.method ~= "GET" then return go() end
@@ -46,7 +46,7 @@ return function (path)
       local files = {}
       for entry in fs.scandir(path) do
         if entry.name == "index.html" and entry.type == "file" then
-          path = path .. "/index.html"
+          path = (#path > 0 and path .. "/" or "") .. "index.html"
           return renderFile()
         end
         files[#files + 1] = entry
