@@ -21,8 +21,8 @@ local function websocketHandler(options, handler)
     local upgrade = headers.upgrade
     if not (
       req.method == "GET" and
-      upgrade and upgrade:lower() == "websocket" and
-      (connection and connection:lower() == "upgrade" or true)
+      upgrade and upgrade:lower():find("websocket", 1, true) and
+      connection and connection:lower():find("upgrade", 1, true)
     ) then
       return go()
     end
