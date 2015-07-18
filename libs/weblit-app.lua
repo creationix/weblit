@@ -76,6 +76,7 @@ local function handleRequest(head, input, socket)
     method = head.method,
     path = head.path,
     headers = setmetatable({}, headerMeta),
+    method = head.method,
     version = head.version,
     keepAlive = head.keepAlive,
     body = input
@@ -257,14 +258,12 @@ function server.route(options, handler)
     if method and req.method ~= method then return go() end
     if host and not host(req.headers.host) then return go() end
     if filter and not filter(req) then return go() end
+    local pathname, query = req.path:match("^([^?]*)%??(.*)")
+    req.query = (query and #query) and parseQuery(query) or {}
     local params
     if path then
-      local pathname, query = req.path:match("^([^?]*)%??(.*)")
       params = path(pathname)
       if not params then return go() end
-      if #query > 0 then
-        req.query = parseQuery(query)
-      end
     end
     req.params = params or {}
     return handler(req, res, go)
