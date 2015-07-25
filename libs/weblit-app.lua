@@ -20,7 +20,7 @@ local readWrap, writeWrap = wrapper.reader, wrapper.writer
 local httpCodec = require('http-codec')
 local tlsWrap = require('coro-tls').wrap
 local parseQuery = require('querystring').parse
-
+local multipart  = require('multipart').parse
 -- Ignore SIGPIPE if it exists on platform
 local uv = require('uv')
 if uv.constants.SIGPIPE then
@@ -258,8 +258,20 @@ function server.route(options, handler)
     if method and req.method ~= method then return go() end
     if host and not host(req.headers.host) then return go() end
     if filter and not filter(req) then return go() end
+    --parse query
     local pathname, query = req.path:match("^([^?]*)%??(.*)")
     req.query = (query and #query) and parseQuery(query) or {}
+    --parse post body
+    if req.body then
+      p(req.headers['Content-Type'])
+      if not req.headers['Content-Type'] or
+        req.headers['Content-Type']~='application/x-www-form-urlencoded' then
+        req.post = multipart(req.body,req.headers['Content-Type'])
+      else
+        req.post = parseQuery(req.body)
+      end
+    end
+    --parse params match with :name
     local params
     if path then
       params = path(pathname)
