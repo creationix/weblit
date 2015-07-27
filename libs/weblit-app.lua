@@ -265,7 +265,7 @@ function server.route(options, handler)
     if req.body then
       p(req.headers['Content-Type'])
       if not req.headers['Content-Type'] or
-        req.headers['Content-Type']~='application/x-www-form-urlencoded' then
+        req.headers['Content-Type']:match('^application/x-www-form-urlencoded') then
         req.post = multipart(req.body,req.headers['Content-Type'])
       else
         req.post = parseQuery(req.body)
