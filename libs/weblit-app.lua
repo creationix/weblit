@@ -1,11 +1,11 @@
 exports.name = "creationix/weblit-app"
-exports.version = "0.2.6-1"
+exports.version = "0.3.0"
 exports.dependencies = {
   'creationix/coro-wrapper@1.0.0',
-  'creationix/coro-tcp@1.0.5',
-  'creationix/coro-tls@1.2.0',
+  'creationix/coro-net@1.1.1',
+  'creationix/coro-tls@1.3.1',
   'luvit/http-codec@1.0.0',
-  'luvit/querystring@1.0.0',
+  'luvit/querystring@1.0.2',
 }
 exports.description = "Weblit is a webapp framework designed around routes and middleware layers."
 exports.tags = {"weblit", "router", "framework"}
@@ -14,7 +14,7 @@ exports.author = { name = "Tim Caswell" }
 exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-app.lua"
 
 
-local createServer = require('coro-tcp').createServer
+local createServer = require('coro-net').createServer
 local wrapper = require('coro-wrapper')
 local readWrap, writeWrap = wrapper.reader, wrapper.writer
 local httpCodec = require('http-codec')
@@ -173,7 +173,7 @@ function server.start()
   end
   for i = 1, #bindings do
     local options = bindings[i]
-    createServer(options.host, options.port, function (rawRead, rawWrite, socket)
+    createServer(options, function (rawRead, rawWrite, socket)
       local tls = options.tls
       if tls then
         rawRead, rawWrite = tlsWrap(rawRead, rawWrite, {
