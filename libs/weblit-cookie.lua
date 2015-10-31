@@ -21,7 +21,6 @@ return function(secret)
       res.headers[#res.headers + 1] = {"Set-Cookie", cookie}
     end
     function res.clearCookie(key, props)
-      req.cookies[key] = nil
       -- set the cookie blank
       local cookie = key .. "=null"
       local props = props or {}
