@@ -1,10 +1,12 @@
-exports.name = "creationix/weblit-auto-headers"
-exports.version = "0.1.2-1"
-exports.description = "The auto-headers middleware helps Weblit apps implement proper HTTP semantics"
-exports.tags = {"weblit", "middleware", "http"}
-exports.license = "MIT"
-exports.author = { name = "Tim Caswell" }
-exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-auto-headers.lua"
+--[[lit-meta
+  name = "creationix/weblit-auto-headers"
+  version = "2.0.0"
+  description = "The auto-headers middleware helps Weblit apps implement proper HTTP semantics"
+  tags = {"weblit", "middleware", "http"}
+  license = "MIT"
+  author = { name = "Tim Caswell" }
+  homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-auto-headers.lua"
+]]
 
 
 --[[

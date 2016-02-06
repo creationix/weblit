@@ -1,13 +1,13 @@
 return {
   name = "creationix/weblit",
-  version = "0.3.4",
+  version = "2.0.0",
   dependencies = {
-    "creationix/weblit-app@0.3.0",
-    "creationix/weblit-auto-headers@0.1.2",
-    "creationix/weblit-etag-cache@0.1.1",
-    "creationix/weblit-logger@0.1.1",
-    "creationix/weblit-static@0.3.1",
-    "creationix/weblit-websocket@0.2.3",
+    "creationix/weblit-app@2.0.0",
+    "creationix/weblit-auto-headers@2.0.0",
+    "creationix/weblit-etag-cache@2.0.0",
+    "creationix/weblit-logger@02.0.0",
+    "creationix/weblit-static@2.0.0",
+    "creationix/weblit-websocket@2.0.0",
   },
   files = {
     "package.lua",

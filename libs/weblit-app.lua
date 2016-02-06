@@ -1,17 +1,19 @@
-exports.name = "creationix/weblit-app"
-exports.version = "0.3.0"
-exports.dependencies = {
-  'creationix/coro-wrapper@1.0.0',
-  'creationix/coro-net@1.1.1',
-  'creationix/coro-tls@1.3.1',
-  'luvit/http-codec@1.0.0',
-  'luvit/querystring@1.0.2',
+--[[lit-meta
+  name = "creationix/weblit-app"
+  version = "2.0.0"
+  dependencies = {
+  'creationix/coro-wrapper@2.0.0',
+  'creationix/coro-net@2.0.0',
+  'creationix/coro-tls@2.0.0',
+  'luvit/http-codec@2.0.0',
+  'luvit/querystring@2.0.0',
 }
-exports.description = "Weblit is a webapp framework designed around routes and middleware layers."
-exports.tags = {"weblit", "router", "framework"}
-exports.license = "MIT"
-exports.author = { name = "Tim Caswell" }
-exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-app.lua"
+  description = "Weblit is a webapp framework designed around routes and middleware layers."
+  tags = {"weblit", "router", "framework"}
+  license = "MIT"
+  author = { name = "Tim Caswell" }
+  homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-app.lua"
+]]
 
 
 local createServer = require('coro-net').createServer

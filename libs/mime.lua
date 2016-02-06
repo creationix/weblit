@@ -1,12 +1,14 @@
-exports.name = "creationix/mime"
-exports.version = "0.1.2-1"
-exports.description = "A simple mime type database useful for serving static files over http."
-exports.tags = {"mime", "static"}
-exports.license = "MIT"
-exports.author = { name = "Tim Caswell" }
-exports.homepage = "https://github.com/creationix/weblit/blob/master/libs/mime.lua"
+--[[lit-meta
+  name = "creationix/mime"
+  version = "2.0.0"
+  description = "A simple mime type database useful for serving static files over http."
+  tags = {"mime", "static"}
+  license = "MIT"
+  author = { name = "Tim Caswell" }
+  homepage = "https://github.com/creationix/weblit/blob/master/libs/mime.lua"
+]]
 
-local mime = exports
+local mime = {}
 local table = {
   ["3gp"] = "video/3gpp",
   a = "application/octet-stream",
@@ -191,4 +193,3 @@ function mime.getType(path)
 end
 
 return mime
-

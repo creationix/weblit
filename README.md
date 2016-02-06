@@ -230,10 +230,12 @@ This is the metapackage that simply includes the other modules.
 It exposes the other modules as a single exports table.
 
 ```lua
-exports.app = require('weblit-app')
-exports.autoHeaders = require('weblit-auto-headers')
-exports.etagCache = require('weblit-etag-cache')
-exports.logger = require('weblit-logger')
-exports.static = require('weblit-static')
-exports.websocket = require('weblit-websocket')
+return {
+  app = require('weblit-app'),
+  autoHeaders = require('weblit-auto-headers'),
+  etagCache = require('weblit-etag-cache'),
+  logger = require('weblit-logger'),
+  static = require('weblit-static'),
+  websocket = require('weblit-websocket'),
+}
 ```
