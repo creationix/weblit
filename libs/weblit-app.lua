@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-app"
-  version = "2.0.0"
+  version = "2.0.1"
   dependencies = {
   'creationix/coro-wrapper@2.0.0',
   'creationix/coro-net@2.0.0',
@@ -20,7 +20,7 @@ local createServer = require('coro-net').createServer
 local wrapper = require('coro-wrapper')
 local readWrap, writeWrap = wrapper.reader, wrapper.writer
 local httpCodec = require('http-codec')
-local tlsWrap = require('coro-tls').wrap
+local tlsWrap
 local parseQuery = require('querystring').parse
 
 -- Ignore SIGPIPE if it exists on platform
@@ -178,6 +178,7 @@ function server.start()
     createServer(options, function (rawRead, rawWrite, socket)
       local tls = options.tls
       if tls then
+        tlsWrap = tlsWrap or require('coro-tls').wrap
         rawRead, rawWrite = tlsWrap(rawRead, rawWrite, {
           server = true,
           key = assert(tls.key, "tls key required"),
