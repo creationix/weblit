@@ -1,8 +1,11 @@
 --[[lit-meta
   name = "creationix/weblit-auto-headers"
-  version = "2.0.0"
+  version = "2.0.1"
   description = "The auto-headers middleware helps Weblit apps implement proper HTTP semantics"
   tags = {"weblit", "middleware", "http"}
+  dependencies = {
+    "creationix/sha1@0.5.0",
+  }
   license = "MIT"
   author = { name = "Tim Caswell" }
   homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-auto-headers.lua"
@@ -28,7 +31,7 @@ Response automatic values:
 
 ]]
 
-local digest = require('openssl').digest.digest
+local sha1 = require('sha1')
 local date = require('os').date
 
 local success, parent = pcall(require, '../package')
@@ -79,7 +82,7 @@ return function (req, res, go)
         headers[#headers + 1] = {"Content-Length", #body}
       end
       if not lowerHeaders.etag then
-        local etag = '"' .. digest("sha1", body) .. '"'
+        local etag = '"' .. sha1(body) .. '"'
         lowerHeaders.etag = etag
         headers[#headers + 1] = {"ETag", etag}
       end
