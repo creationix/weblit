@@ -1,13 +1,11 @@
 --[[lit-meta
   name = "creationix/weblit-app"
-  version = "2.0.1"
+  version = "2.1.0"
   dependencies = {
-  'creationix/coro-wrapper@2.0.0',
-  'creationix/coro-net@2.0.0',
-  'creationix/coro-tls@2.0.0',
-  'luvit/http-codec@2.0.0',
-  'luvit/querystring@2.0.0',
-}
+    'creationix/coro-net@2.2.0',
+    'luvit/http-codec@2.0.0',
+    'luvit/querystring@2.0.0',
+  }
   description = "Weblit is a webapp framework designed around routes and middleware layers."
   tags = {"weblit", "router", "framework"}
   license = "MIT"
@@ -17,10 +15,7 @@
 
 
 local createServer = require('coro-net').createServer
-local wrapper = require('coro-wrapper')
-local readWrap, writeWrap = wrapper.reader, wrapper.writer
 local httpCodec = require('http-codec')
-local tlsWrap
 local parseQuery = require('querystring').parse
 
 -- Ignore SIGPIPE if it exists on platform
@@ -121,11 +116,7 @@ local function handleRequest(head, input, socket)
   return out, res.body, res.upgrade
 end
 
-local function handleConnection(rawRead, rawWrite, socket)
-
-  -- Speak in HTTP events
-  local read, updateDecoder = readWrap(rawRead, httpCodec.decoder())
-  local write, updateEncoder = writeWrap(rawWrite, httpCodec.encoder())
+local function handleConnection(read, write, socket, updateDecoder, updateEncoder)
 
   for head in read do
     local parts = {}
@@ -175,18 +166,9 @@ function server.start()
   end
   for i = 1, #bindings do
     local options = bindings[i]
-    createServer(options, function (rawRead, rawWrite, socket)
-      local tls = options.tls
-      if tls then
-        tlsWrap = tlsWrap or require('coro-tls').wrap
-        rawRead, rawWrite = tlsWrap(rawRead, rawWrite, {
-          server = true,
-          key = assert(tls.key, "tls key required"),
-          cert = assert(tls.cert, "tls cert required"),
-        })
-      end
-      return handleConnection(rawRead, rawWrite, socket)
-    end)
+    options.decode = httpCodec.decoder()
+    options.encode = httpCodec.encoder()
+    createServer(options, handleConnection)
     print("HTTP server listening at http" .. (options.tls and "s" or "") .. "://" .. options.host .. (options.port == (options.tls and 443 or 80) and "" or ":" .. options.port) .. "/")
   end
   return server

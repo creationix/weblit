@@ -1,8 +1,9 @@
 --[[lit-meta
   name = "creationix/weblit-websocket"
-  version = "2.0.0"
+  version = "2.1.0"
   dependencies = {
-    "creationix/websocket-codec@2.0.0"
+    "creationix/websocket-codec@2.1.1",
+    "creationix/coro-websocket@1.0.0",
   }
   description = "The websocket middleware for Weblit enables handling websocket clients."
   tags = {"weblit", "middleware", "websocket"}
@@ -12,6 +13,7 @@
 ]]
 
 local websocketCodec = require('websocket-codec')
+local wrapIo = require('coro-websocket').wrapIo
 
 local function websocketHandler(options, handler)
   return function (req, res, go)
@@ -68,6 +70,10 @@ local function websocketHandler(options, handler)
     function res.upgrade(read, write, updateDecoder, updateEncoder)
       updateDecoder(websocketCodec.decode)
       updateEncoder(websocketCodec.encode)
+      read, write = wrapIo(read, write, {
+        mask = false,
+        heartbeat = options.heartbeat
+      })
       local success, err = pcall(handler, req, read, write)
       if not success then
         print(err)
