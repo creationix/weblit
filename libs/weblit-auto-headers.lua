@@ -1,10 +1,10 @@
 --[[lit-meta
   name = "creationix/weblit-auto-headers"
-  version = "2.0.1"
+  version = "2.0.2"
   description = "The auto-headers middleware helps Weblit apps implement proper HTTP semantics"
   tags = {"weblit", "middleware", "http"}
   dependencies = {
-    "creationix/sha1@0.5.0",
+    "creationix/sha1@1.0.0",
   }
   license = "MIT"
   author = { name = "Tim Caswell" }
