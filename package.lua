@@ -1,9 +1,9 @@
 return {
   name = "creationix/weblit",
-  version = "2.1.0",
+  version = "2.1.1",
   dependencies = {
     "creationix/weblit-app@2.1.0",
-    "creationix/weblit-auto-headers@2.0.0",
+    "creationix/weblit-auto-headers@2.0.2",
     "creationix/weblit-etag-cache@2.0.0",
     "creationix/weblit-logger@02.0.0",
     "creationix/weblit-static@2.0.0",
