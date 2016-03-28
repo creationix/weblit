@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-app"
-  version = "2.1.0"
+  version = "2.1.1"
   dependencies = {
     'creationix/coro-net@2.2.0',
     'luvit/http-codec@2.0.0',
@@ -146,7 +146,8 @@ function server.bind(options)
     options.host = "127.0.0.1"
   end
   if not options.port then
-    options.port = require('uv').getuid() == 0 and
+    local getuid = require('uv').getuid
+    options.port = (getuid and getuid() == 0) and
       (options.tls and 443 or 80) or
       (options.tls and 8443 or 8080)
   end
