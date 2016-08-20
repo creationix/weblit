@@ -1,9 +1,10 @@
 --[[lit-meta
   name = "creationix/weblit-static"
-  version = "2.0.0"
+  version = "2.0.1"
   dependencies = {
     "creationix/mime@2.0.0",
     "creationix/coro-fs@2.0.0",
+    "luvit/json@2.5.2",
   }
   description = "A weblit middleware for serving static files from disk or bundle."
   tags = {"weblit", "middleware", "static"}
