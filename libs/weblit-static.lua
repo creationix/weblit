@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-static"
-  version = "2.0.1"
+  version = "2.1.0"
   dependencies = {
     "creationix/mime@2.0.0",
     "creationix/coro-fs@2.0.0",
@@ -15,11 +15,42 @@
 
 local getType = require("mime").getType
 local jsonStringify = require('json').stringify
-local makeChroot = require('coro-fs').chroot
 
 return function (rootPath)
-
-  local fs = makeChroot(rootPath)
+  local fs
+  local i, j = rootPath:find("^bundle:")
+  if i then
+    local pathJoin = require('luvi').path.join
+    local prefix = rootPath:sub(j + 1)
+    if prefix:byte(1) == 47 then
+      prefix = prefix:sub(2)
+    end
+    local bundle = require('luvi').bundle
+    fs = {}
+    -- bundle.stat
+    -- bundle.readdir
+    -- bundle.readfile
+    function fs.stat(path)
+      return bundle.stat(pathJoin(prefix, path))
+    end
+    function fs.scandir(path)
+      local dir = bundle.readdir(pathJoin(prefix, path))
+      local offset = 1
+      return function ()
+        local name = dir[offset]
+        if not name then return end
+        offset = offset + 1
+        local stat = bundle.stat(pathJoin(prefix, path, name))
+        stat.name = name
+        return stat
+      end
+    end
+    function fs.readFile(path)
+      return bundle.readfile(pathJoin(prefix, path))
+    end
+  else
+    fs = require('coro-fs').chroot(rootPath)
+  end
 
   return function (req, res, go)
     if req.method ~= "GET" then return go() end
