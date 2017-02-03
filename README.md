@@ -6,7 +6,7 @@ Weblit is a collection of lit packages that together form a nice web framework.
 
 ## weblit-app
 
-This is the core of the framework.  It's export value is the app itself.  The
+This is the core of the framework.  Its export value is the app itself.  The
 config functions can be chained off this config for super terse syntax.
 
 ```lua
@@ -68,7 +68,7 @@ HTTPS | 442  | 8443
 
 ### use(middleware)
 
-This adds a raw middleware to the chain.  It's signature is:
+This adds a raw middleware to the chain.  Its signature is:
 
 ```lua
 .use(function (req, res, go)
