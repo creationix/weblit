@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit"
-  version = "3.0.1"
+  version = "3.1.0"
   dependencies = {
     "creationix/weblit-app@3.0.0",
     "creationix/weblit-auto-headers@2.0.2",
@@ -9,6 +9,7 @@
     "creationix/weblit-cors@2.0.0",
     "creationix/weblit-static@2.1.0",
     "creationix/weblit-websocket@3.0.0",
+    "creationix/weblit-force-https@2"
   }
   files = {
     "package.lua",
