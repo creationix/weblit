@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-server"
-  version = "3.1.1"
+  version = "3.1.2"
   dependencies = {
     'creationix/coro-net@3.0.0',
     'luvit/http-codec@3.0.0'
@@ -152,6 +152,7 @@ local function newServer(run)
         port = ":" .. options.port
       end
       local host = options.host
+      if host:match(":") then host = "[" .. host .. "]" end
       print("    " .. protocol .. '://' .. host .. port .. '/')
     end
 
