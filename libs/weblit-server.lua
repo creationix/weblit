@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-server"
-  version = "3.1.0"
+  version = "3.1.1"
   dependencies = {
     'creationix/coro-net@3.0.0',
     'luvit/http-codec@3.0.0'
@@ -130,9 +130,6 @@ local function newServer(run)
   end
 
   function server.bind(options)
-    if not options.host then
-      options.host = "0.0.0.0"
-    end
     if not options.port then
       local getuid = require('uv').getuid
       options.port = (getuid and getuid() == 0) and
@@ -147,34 +144,58 @@ local function newServer(run)
     if #bindings == 0 then
       server.bind({})
     end
-    print("Weblit server listening at:")
-    for i = 1, #bindings do
-      local options = bindings[i]
-      options.decode = httpCodec.decoder()
-      options.encode = httpCodec.encoder()
-      createServer(options, handleConnection)
+
+    local function show(options)
       local protocol = options.tls and 'https' or 'http'
-      local host = options.host
       local port = ""
       if options.port ~= (options.tls and 443 or 80) then
         port = ":" .. options.port
       end
-      local function show(host)
-         print("    " .. protocol .. '://' .. host .. port .. '/')
+      local host = options.host
+      print("    " .. protocol .. '://' .. host .. port .. '/')
+    end
+
+    print("Weblit server listening at:")
+
+    for i = 1, #bindings do
+      local options = bindings[i]
+      if options.host then
+        show(options)
       end
-      if options.host == "0.0.0.0" then
+    end
+
+    local ips = {}
+    for i = 1, #bindings do
+      local options = bindings[i]
+      if options.host then
+        local list = uv.getaddrinfo(options.host, nil, {})
+        for i = 1, #list do
+          local entry = list[i]
+          ips[entry.addr .. " " .. options.port] = options
+        end
+      else
         for name, list in pairs(uv.interface_addresses()) do
           for i = 1, #list do
             local data = list[i]
-            if data.family == 'inet' then
-              show(data.ip)
+            if data.family == "inet" then
+              ips[data.ip .. ' ' .. options.port] = options
             end
           end
         end
-      else
-        show(options.host)
       end
     end
+
+    for addr, options in pairs(ips) do
+      local host, port = addr:match("(.*) (.*)")
+      port = tonumber(port)
+      options.decode = httpCodec.decoder()
+      options.encode = httpCodec.encoder()
+      options.host = host
+      options.port = port
+      createServer(options, handleConnection)
+      show(options)
+    end
+
     return server
   end
 
