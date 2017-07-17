@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-server"
-  version = "3.0.0"
+  version = "3.1.0"
   dependencies = {
     'creationix/coro-net@3.0.0',
     'luvit/http-codec@3.0.0'
@@ -12,6 +12,7 @@
   homepage = "https://github.com/creationix/weblit/blob/master/libs/weblit-app.lua"
 ]]
 
+local uv = require('uv')
 local createServer = require('coro-net').createServer
 local httpCodec = require('http-codec')
 
@@ -130,7 +131,7 @@ local function newServer(run)
 
   function server.bind(options)
     if not options.host then
-      options.host = "127.0.0.1"
+      options.host = "0.0.0.0"
     end
     if not options.port then
       local getuid = require('uv').getuid
@@ -146,14 +147,33 @@ local function newServer(run)
     if #bindings == 0 then
       server.bind({})
     end
+    print("Weblit server listening at:")
     for i = 1, #bindings do
       local options = bindings[i]
       options.decode = httpCodec.decoder()
       options.encode = httpCodec.encoder()
       createServer(options, handleConnection)
-      print("HTTP server listening at http" .. (options.tls and "s" or "") ..
-            "://" .. options.host .. (options.port == (options.tls and 443 or 80)
-            and "" or ":" .. options.port) .. "/")
+      local protocol = options.tls and 'https' or 'http'
+      local host = options.host
+      local port = ""
+      if options.port ~= (options.tls and 443 or 80) then
+        port = ":" .. options.port
+      end
+      local function show(host)
+         print("    " .. protocol .. '://' .. host .. port .. '/')
+      end
+      if options.host == "0.0.0.0" then
+        for name, list in pairs(uv.interface_addresses()) do
+          for i = 1, #list do
+            local data = list[i]
+            if data.family == 'inet' then
+              show(data.ip)
+            end
+          end
+        end
+      else
+        show(options.host)
+      end
     end
     return server
   end
