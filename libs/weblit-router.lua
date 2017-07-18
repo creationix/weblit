@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-router"
-  version = "3.0.0"
+  version = "3.0.1"
   dependencies = {
     'luvit/querystring@2.0.0'
   }
@@ -108,11 +108,12 @@ local function newRouter()
   function router.run(req, res, go)
     local len = #handlers
     local function run(i)
-      return handlers[i](req, res,
-        i < len
-          and function () return run(i + 1) end
-          or go or function () end
-      )
+      if i > len then
+        return (go or function () end)()
+      end
+      return handlers[i](req, res, function ()
+        return run(i + 1)
+      end)
     end
     run(1)
   end
