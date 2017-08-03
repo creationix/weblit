@@ -1,10 +1,11 @@
 --[[lit-meta
   name = "creationix/weblit-static"
-  version = "2.1.0"
+  version = "2.2.0"
   dependencies = {
     "creationix/mime@2.0.0",
     "creationix/coro-fs@2.0.0",
     "luvit/json@2.5.2",
+    "creationix/sha1@1.0.0",
   }
   description = "A weblit middleware for serving static files from disk or bundle."
   tags = {"weblit", "middleware", "static"}
@@ -15,6 +16,7 @@
 
 local getType = require("mime").getType
 local jsonStringify = require('json').stringify
+local sha1 = require('sha1')
 
 return function (rootPath)
   local fs
@@ -66,6 +68,7 @@ return function (rootPath)
       local body = assert(fs.readFile(path))
       res.code = 200
       res.headers["Content-Type"] = getType(path)
+      res.headers["ETag"] = '"' .. sha1(body) .. '"'
       res.body = body
       return
     end
