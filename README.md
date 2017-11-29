@@ -52,7 +52,7 @@ while also listening on port `8443` using HTTPS.
   port = 8443,
   tls = {
     cert = module:load("cert.pem"),
-    key = module:load("key.pem",
+    key = module:load("key.pem"),
   }
 })
 ```
