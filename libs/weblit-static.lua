@@ -23,6 +23,7 @@ return function (rootPath)
   local i, j = rootPath:find("^bundle:")
   if i then
     local pathJoin = require('luvi').path.join
+    local pathUtils = require('luvi').path
     local prefix = rootPath:sub(j + 1)
     if prefix:byte(1) == 47 then
       prefix = prefix:sub(2)
@@ -51,9 +52,10 @@ return function (rootPath)
       return bundle.readfile(pathJoin(prefix, path))
     end
   else
+    pathUtils = require('path')
     fs = require('coro-fs').chroot(rootPath)
   end
-
+  local fullRootPath = pathUtils.resolve(rootPath)
   return function (req, res, go)
     if req.method ~= "GET" then return go() end
     local path = (req.params and req.params.path) or req.path
@@ -94,7 +96,7 @@ return function (rootPath)
       res.body = body
       return
     end
-
+    path = pathUtils.join(fullRootPath, (pathUtils.normalize(path):gsub("%.%.[/\\]","")))
     if stat.type == "directory" then
       return renderDirectory()
     elseif stat.type == "file" then
