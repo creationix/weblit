@@ -6,6 +6,7 @@
     "creationix/coro-fs@2.0.0",
     "luvit/json@2.5.2",
     "creationix/sha1@1.0.0",
+    "luvit/path@2.0.1"
   }
   description = "A weblit middleware for serving static files from disk or bundle."
   tags = {"weblit", "middleware", "static"}
@@ -17,13 +18,13 @@
 local getType = require("mime").getType
 local jsonStringify = require('json').stringify
 local sha1 = require('sha1')
+local pathUtils = require('path')
 
 return function (rootPath)
   local fs
   local i, j = rootPath:find("^bundle:")
   if i then
     local pathJoin = require('luvi').path.join
-    local pathUtils = require('luvi').path
     local prefix = rootPath:sub(j + 1)
     if prefix:byte(1) == 47 then
       prefix = prefix:sub(2)
@@ -52,7 +53,6 @@ return function (rootPath)
       return bundle.readfile(pathJoin(prefix, path))
     end
   else
-    pathUtils = require('path')
     fs = require('coro-fs').chroot(rootPath)
   end
   local fullRootPath = pathUtils.resolve(rootPath)
