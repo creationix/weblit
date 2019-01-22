@@ -1,9 +1,9 @@
 --[[lit-meta
   name = "creationix/weblit-static"
-  version = "2.2.0"
+  version = "2.2.1"
   dependencies = {
     "creationix/mime@2.0.0",
-    "creationix/coro-fs@2.0.0",
+    "creationix/coro-fs@2.2.1",
     "luvit/json@2.5.2",
     "creationix/sha1@1.0.0",
   }
