@@ -27,7 +27,7 @@ local server = require('weblit-server').newServer(router.run)
 -- Forward router methods from app instance
 local serverMeta = {}
 function serverMeta:__index(name)
-  if type(router[name] == "function") then
+  if type(router[name]) == "function" then
     return function(...)
       router[name](...)
       return self
