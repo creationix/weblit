@@ -116,7 +116,9 @@ local function newServer(run)
       if upgrade then
         return upgrade(read, write, updateDecoder, updateEncoder, socket)
       end
-      write(body)
+      if body then
+        write(body)
+      end
       if not (res.keepAlive and head.keepAlive) then
         break
       end
