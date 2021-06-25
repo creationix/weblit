@@ -1,6 +1,6 @@
 --[[lit-meta
   name = "creationix/weblit-app"
-  version = "3.2.0"
+  version = "3.2.1"
   dependencies = {
     'creationix/coro-net@3.0.0',
     'luvit/http-codec@3.0.0',
