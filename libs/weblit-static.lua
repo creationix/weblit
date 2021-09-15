@@ -92,11 +92,11 @@ return function (rootPath, redirect)
         res.code = 301
         res.reason = "Moved Permanently"
         res.headers["Location"] = redirect
-      return end
-      local body = jsonStringify(files) .. "\n"
-      res.code = 200
-      res.headers["Content-Type"] = "application/json"
-      res.body = body
+      else
+        local body = jsonStringify(files) .. "\n"
+        res.code = 200
+        res.headers["Content-Type"] = "application/json"
+        res.body = body
       return
     end
 
