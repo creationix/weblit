@@ -18,7 +18,7 @@ local getType = require("mime").getType
 local jsonStringify = require('json').stringify
 local sha1 = require('sha1')
 
-return function (rootPath)
+return function (rootPath, redirect)
   local fs
   local i, j = rootPath:find("^bundle:")
   if i then
@@ -88,12 +88,17 @@ return function (rootPath)
         files[#files + 1] = entry
         entry.url = "http://" .. req.headers.host .. req.path .. entry.name
       end
-      local body = jsonStringify(files) .. "\n"
-      res.code = 200
-      res.headers["Content-Type"] = "application/json"
-      res.body = body
-      return
-    end
+      if redirect and type(redirect) == "string" then
+        res.code = 301
+        res.reason = "Moved Permanently"
+        res.headers["Location"] = redirect
+      else 
+        local body = jsonStringify(files) .. "\n"
+        res.code = 200
+        res.headers["Content-Type"] = "application/json"
+        res.body = body
+      end
+      return end
 
     if stat.type == "directory" then
       return renderDirectory()
