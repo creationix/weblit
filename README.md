@@ -63,7 +63,7 @@ you're running as root and if the connection is TLS encrypted.
 |      | Root | User
 |------|-----:|------:
 |HTTP  | 80   | 8080
-|HTTPS | 442  | 8443
+|HTTPS | 443  | 8443
 
 
 ### use(middleware)
